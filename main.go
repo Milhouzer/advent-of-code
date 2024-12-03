@@ -19,6 +19,7 @@ var (
 	daysMap = map[int]utils.Day{
 		1: &days.Day1{},
 		2: &days.Day2{},
+		3: &days.Day3{},
 	}
 	LineBreak = "\r\n"
 )
