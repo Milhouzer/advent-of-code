@@ -13,19 +13,30 @@ type Day3 struct {
 var _ utils.Day = (*Day3)(nil)
 
 var (
-	pattern    = `mul\((\d{1,3}),(\d{1,3})\)|(don\'t\(\))|(do\(\))`
-	doCmd      = "do()"
-	dontCmd    = "don't()"
-	mulPattern = "mul(%d,%d)"
+	pattern      = `mul\((\d{1,3}),(\d{1,3})\)|(don\'t\(\))|(do\(\))`
+	doCmd        = "do()"
+	dontCmd      = "don't()"
+	mulPattern   = "mul(%d,%d)"
+	solverRegexp *regexp.Regexp
 )
+
+// Preprocess regexp to avoid O(2^m) complexity addition to solve function. (m is the regexp length)
+func (d *Day3) Preprocess() error {
+	re, err := regexp.Compile(pattern)
+	if err != nil {
+		return err
+	}
+
+	solverRegexp = re
+	return nil
+}
 
 func (d *Day3) Solve(path string) {
 	content := utils.ReadFileContent(path)
 
 	sum := 0
 	pt2sum := 0
-	re := regexp.MustCompile(pattern)
-	matches := re.FindAllString(content, -1)
+	matches := solverRegexp.FindAllString(content, -1)
 	factor := 1
 	for _, match := range matches {
 		if match == doCmd {

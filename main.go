@@ -51,7 +51,7 @@ func main() {
 	}
 
 	fmt.Printf("Today we solve the day %d problem\n", dayNumber)
-	v, ok := daysMap[dayNumber]
+	day, ok := daysMap[dayNumber]
 	if !ok {
 		fmt.Printf("Day %d is not solved yet, maybe later...", dayNumber)
 		return
@@ -66,8 +66,9 @@ func main() {
 	} else {
 		fmt.Printf("Skip downloading input file for day %d\n", dayNumber)
 	}
-	v.Solve(filePath)
-	fmt.Printf("Problem has been solved: \nPt1 answer: %d\nPt2 answer: %d", v.PartOneSolution(), v.PartTwoSolution())
+
+	solver := utils.DaySolver{}
+	solver.Solve(day, filePath)
 }
 
 func initSolver() {
