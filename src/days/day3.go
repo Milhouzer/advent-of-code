@@ -21,7 +21,7 @@ var (
 )
 
 // Preprocess regexp to avoid O(2^m) complexity addition to solve function. (m is the regexp length)
-func (d *Day3) Preprocess() error {
+func (d *Day3) Preprocess(path string) error {
 	re, err := regexp.Compile(pattern)
 	if err != nil {
 		return err
