@@ -7,6 +7,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
+	"strings"
 
 	"github.com/joho/godotenv"
 )
@@ -82,4 +84,14 @@ func ReadFileContent(filename string) string {
 	}
 
 	return string(content)
+}
+
+// ClearScreen clears the console screen using an ANSI escape sequence
+func ClearScreen() {
+	cmd := exec.Command("clear")
+	if strings.Contains(strings.ToLower(os.Getenv("OS")), "windows") {
+		cmd = exec.Command("cmd", "/c", "cls")
+	}
+	cmd.Stdout = os.Stdout
+	cmd.Run()
 }
