@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/joho/godotenv"
 )
@@ -83,11 +82,4 @@ func ReadFileContent(filename string) string {
 	}
 
 	return string(content)
-}
-
-func Timer(name string) func() {
-	start := time.Now()
-	return func() {
-		fmt.Printf("%s took %v\n", name, time.Since(start))
-	}
 }
