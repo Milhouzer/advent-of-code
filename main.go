@@ -23,6 +23,7 @@ var (
 		4: &days.Day4{},
 		5: &days.Day5{},
 		6: &days.Day6{},
+		7: &days.Day7{},
 	}
 	LineBreak = "\r\n"
 )
