@@ -17,13 +17,18 @@ const (
 
 var (
 	daysMap = map[int]utils.Day{
-		1: &days.Day1{},
-		2: &days.Day2{},
-		3: &days.Day3{},
-		4: &days.Day4{},
-		5: &days.Day5{},
-		6: &days.Day6{},
-		7: &days.Day7{},
+		1:  &days.Day1{},
+		2:  &days.Day2{},
+		3:  &days.Day3{},
+		4:  &days.Day4{},
+		5:  &days.Day5{},
+		6:  &days.Day6{},
+		7:  &days.Day7{},
+		8:  &days.Day8{},
+		9:  &days.Day9{},
+		10: &days.Day10{},
+		11: &days.Day11{},
+		12: &days.Day12{},
 	}
 	LineBreak = "\r\n"
 )

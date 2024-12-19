@@ -111,8 +111,12 @@ func march_pt_2(world *World, tr *Transform) bool {
 			Position: pos,
 			Rotation: rot,
 		}
-		if checkLoop(world, &subAgent) {
-			newObstacles[pos] = struct{}{}
+		obstacles := append(world.Obstacles(), *next)
+		visited := make(map[Vector3][]Vector3)
+		// for k, v := range world.Visited() {
+		// 	visited[k] = v
+		// }
+		if checkLoop(obstacles, visited, world.Bounds, &subAgent) {
 			forbidden++
 		}
 	}
@@ -127,35 +131,25 @@ func march_pt_2(world *World, tr *Transform) bool {
 	return true
 }
 
-func checkLoop(world *World, tr *Transform) bool {
-	encountered := make(map[Vector3][]Vector3)
-	pos := tr.Position
-	rot := tr.Rotation
-	encountered[pos] = []Vector3{rot}
-	tr.RotateRight()
-	it := 0
+func checkLoop(obstacles []Vector3, visited map[Vector3][]Vector3, bounds geometry.WorldBounds, tr *Transform) bool {
 	for {
 		next := tr.Position.Add(&tr.Rotation)
-		if !world.IsInBounds(next) {
+		if !bounds.Contains(next) {
 			return false
 		}
 
-		if world.IsObstacle(*next) || (tr.Position == pos && it != 0) {
-			tr.RotateRight()
-			v, ok := encountered[*next]
-			if ok {
-				if slices.Contains(v, tr.Rotation) {
-					world.ForbiddenPosition[pos] = struct{}{}
-					return true
-				}
-				encountered[*next] = append(encountered[*next], tr.Rotation)
-			} else {
-				encountered[*next] = []Vector3{tr.Rotation}
+		v, ok := visited[tr.Position]
+		if ok {
+			if slices.Contains(v, tr.Rotation) {
+				return true
 			}
+		}
+		visited[tr.Position] = append(visited[tr.Position], tr.Rotation)
+		if slices.Contains(obstacles, *next) {
+			tr.RotateRight()
 			next = tr.Position.Add(&tr.Rotation)
 		}
 
 		tr.Position = *next
-		it++
 	}
 }

@@ -4,7 +4,6 @@ import (
 	"adventofcode/src/utils"
 	"cmp"
 	"fmt"
-	"maps"
 	"math"
 	"slices"
 	"strings"
@@ -108,36 +107,28 @@ func (b *WorldBounds) Contains(pos *Vector3) bool {
 	return pos.X >= b.Left && pos.X < b.Right && pos.Y >= b.Bot && pos.Y < b.Up
 }
 
-var (
-	crosses string
-)
-
 type World struct {
 	sizeX int
 	sizeY int
 	// Visited maps visited positions with directions
-	visited           map[Vector3]Vector3
-	obstacles         []Vector3
-	constraints       map[Segment]struct{}
-	ForbiddenPosition map[Vector3]struct{}
-	Bounds            WorldBounds
+	visited   map[Vector3][]Vector3
+	obstacles []Vector3
+	Bounds    WorldBounds
 }
 
 func WorldFromFile(lines []string) (*World, Vector3) {
 	sX := len(lines[0])
 	sY := len(lines)
 	world := &World{
-		sizeX:             sX,
-		sizeY:             sY,
-		visited:           make(map[Vector3]Vector3),
-		obstacles:         make([]Vector3, 0),
-		constraints:       map[Segment]struct{}{},
-		ForbiddenPosition: make(map[Vector3]struct{}),
+		sizeX:     sX,
+		sizeY:     sY,
+		visited:   make(map[Vector3][]Vector3),
+		obstacles: make([]Vector3, 0),
 		Bounds: WorldBounds{
 			Up:    float64(sY),
 			Bot:   0,
 			Left:  0,
-			Right: float64(sY),
+			Right: float64(sX),
 		},
 	}
 
@@ -148,7 +139,7 @@ func WorldFromFile(lines []string) (*World, Vector3) {
 			worldPos := Vector3{X: float64(j), Y: float64(sY - i - 1), Z: 0}
 			s := lines[i][j]
 			if s == POUND_SYMBOL {
-				world.obstacles = append(world.obstacles, worldPos)
+				world.AddObstacle(worldPos)
 			}
 			if s == AGENT_SYMBOL {
 				startPos = worldPos
@@ -157,6 +148,18 @@ func WorldFromFile(lines []string) (*World, Vector3) {
 	}
 
 	return world, startPos
+}
+
+func (w *World) Obstacles() []Vector3 {
+	return w.obstacles
+}
+
+func (w *World) AddObstacle(worldPos Vector3) {
+	w.obstacles = append(w.obstacles, worldPos)
+}
+
+func (w *World) RemoveObstacle(worldPos Vector3) {
+	w.obstacles = slices.DeleteFunc(w.obstacles, func(v Vector3) bool { return v.Equals(&worldPos) })
 }
 
 func (w *World) SizeX() int {
@@ -168,11 +171,11 @@ func (w *World) SizeY() int {
 }
 
 func (w *World) Visit(pos, rot Vector3) {
-	w.visited[pos] = rot
+	w.visited[pos] = append(w.visited[pos], rot)
 }
 
-func (w *World) Visited() []Vector3 {
-	return slices.Collect(maps.Keys(w.visited))
+func (w *World) Visited() map[Vector3][]Vector3 {
+	return w.visited
 }
 
 func (w *World) HasBeenVisited(pos Vector3) bool {
@@ -198,22 +201,22 @@ func Clamp[T cmp.Ordered](value, min, max T) T {
 }
 
 func (w *World) DisplayAround(center Vector3, sX, sY int) {
-	if len(w.ForbiddenPosition) < 1800 {
-		return
-	}
+	// if len(w.ForbiddenPosition) < 1800 {
+	// 	return
+	// }
 	utils.ClearScreen()
 	up := Clamp(int(center.Y)+sY/2, 0, w.SizeY())
 	bot := Clamp(int(center.Y)-sY/2, 0, w.SizeY())
 	left := Clamp(int(center.X)-sX/2, 0, w.SizeX())
 	right := Clamp(int(center.X)+sX/2, 0, w.SizeX())
 
-	forbidden := slices.Collect(maps.Keys(w.ForbiddenPosition))
+	// forbidden := slices.Collect(maps.Keys(w.ForbiddenPosition))
 	for i := bot; i < bot+sY && i < up; i++ {
 		line := []rune(strings.Repeat(" ", sX))
 		for j := left; j < left+sX && j < right; j++ {
 			pos := Vector3{X: float64(j), Y: float64(i), Z: 0}
 			if v, ok := w.visited[pos]; ok {
-				switch v {
+				switch v[0] {
 				case Vector3{1, 0, 0}:
 					line[j] = '>'
 				case Vector3{-1, 0, 0}:
@@ -224,9 +227,9 @@ func (w *World) DisplayAround(center Vector3, sX, sY int) {
 					line[j] = '^'
 				}
 			}
-			if slices.Contains(forbidden, pos) {
-				line[j] = 'O'
-			}
+			// if slices.Contains(forbidden, pos) {
+			// 	line[j] = 'O'
+			// }
 			if slices.Contains(w.obstacles, pos) {
 				line[j] = '#'
 			}
@@ -239,36 +242,37 @@ func (w *World) DisplayAround(center Vector3, sX, sY int) {
 type LineTraceResult struct {
 	Hit   bool
 	Trace Segment
-	Debug []*Vector3
+	Steps []*Vector3
 }
 
-func LineTrace(world *World, pos, dir Vector3) (res LineTraceResult) {
-	next := pos.Add(&dir)
-	if !world.IsInBounds(next) {
+func LineTraceInBounds(bounds WorldBounds, pos, step Vector3, returnSteps bool) (res LineTraceResult) {
+	currentPos := &pos
+	if !bounds.Contains(currentPos) {
+		res.Trace = Segment{
+			Origin: *currentPos,
+			End:    *currentPos,
+		}
 		return
+	}
+	if returnSteps {
+		res.Steps = append(res.Steps, currentPos)
 	}
 
 	for {
-		res.Debug = append(res.Debug, next)
-		nextPos := next.Add(&dir)
-		if world.IsObstacle(*nextPos) {
-			res.Hit = true
+		nextPos := currentPos.Add(&step)
+		if !bounds.Contains(nextPos) {
 			res.Trace = Segment{
 				Origin: pos,
-				End:    *next,
-			}
-			// fmt.Printf("Obstacle on %v from %v towards %v\n", next, pos, dir)
-			return
-		}
-
-		if !world.IsInBounds(nextPos) {
-			res.Trace = Segment{
-				Origin: pos,
-				End:    *next,
+				End:    *currentPos,
 			}
 			return
 		}
+		currentPos = nextPos
 
-		next = nextPos
+		if returnSteps {
+			res.Steps = append(res.Steps, currentPos)
+		}
+
+		res.Hit = true
 	}
 }

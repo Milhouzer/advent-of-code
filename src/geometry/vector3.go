@@ -30,6 +30,10 @@ func (v *Vector3) Subtract(other *Vector3) *Vector3 {
 	return &Vector3{X: v.X - other.X, Y: v.Y - other.Y, Z: v.Z - other.Z}
 }
 
+func (v *Vector3) Mul(f float64) *Vector3 {
+	return &Vector3{X: v.X * f, Y: v.Y * f, Z: v.Z * f}
+}
+
 // Magnitude returns the magnitude (length) of the vector.
 func (v *Vector3) Magnitude() float64 {
 	return math.Sqrt(v.X*v.X + v.Y*v.Y + v.Z*v.Z)
