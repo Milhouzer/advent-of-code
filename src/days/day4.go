@@ -7,11 +7,11 @@ import (
 )
 
 type Day4 struct {
-	utils.DayN
+	DayN
 	matrix [][]float32
 }
 
-var _ utils.Day = (*Day4)(nil)
+var _ Day = (*Day4)(nil)
 
 /**************************************/
 /* Elegant solution using convolution */
@@ -118,7 +118,7 @@ var (
 )
 
 func (d *Day4) Preprocess(path string) error {
-	lines := utils.ReadFile(path)
+	lines := utils.ReadLines(path)
 	d.matrix = convertToMatrix(lines)
 	// log.Printf("%v", d.matrix)
 	output := xmasConv(TestMatrix)
@@ -127,7 +127,7 @@ func (d *Day4) Preprocess(path string) error {
 }
 
 func (d *Day4) Solve(path string) {
-	lines := utils.ReadFile(path)
+	lines := utils.ReadLines(path)
 
 	start := time.Now()
 	count := 0

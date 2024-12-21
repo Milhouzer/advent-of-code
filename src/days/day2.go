@@ -9,13 +9,13 @@ import (
 )
 
 type Day2 struct {
-	utils.DayN
+	DayN
 }
 
-var _ utils.Day = (*Day2)(nil)
+var _ Day = (*Day2)(nil)
 
 func (d *Day2) Solve(path string) {
-	lines := utils.ReadFile(path)
+	lines := utils.ReadLines(path)
 
 	// Part 1
 	safe := 0

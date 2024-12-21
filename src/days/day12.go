@@ -1,37 +1,17 @@
 package days
 
 import (
+	"adventofcode/src/mathematics"
 	"adventofcode/src/utils"
 	"fmt"
-	"math"
 )
 
+type Vector2 = mathematics.Vector2
+
 type Day12 struct {
-	utils.DayN
+	DayN
 	tiles [][]byte
 	areas map[area]struct{}
-}
-
-type Vector2 struct {
-	I int
-	J int
-}
-
-// Add other to a [Vector2]
-func (v *Vector2) Add(other *Vector2) *Vector2 {
-	return &Vector2{I: v.I + other.I, J: v.J + other.J}
-}
-
-func (v *Vector2) Manhattan() int {
-	return int(math.Abs(float64(v.I))) + int(math.Abs(float64(v.J)))
-}
-
-func (v *Vector2) IsZero() bool {
-	return v.I == 0 && v.J == 0
-}
-
-func (v *Vector2) InBounds(i, j int) bool {
-	return v.I >= 0 && v.I < i && v.J >= 0 && v.J < j
 }
 
 type area struct {
@@ -60,10 +40,10 @@ type Corner struct {
 
 var (
 	gridDirs = []Vector2{
-		{0, 1},
-		{0, -1},
-		{-1, 0},
-		{1, 0},
+		{I: 0, J: 1},
+		{I: 0, J: -1},
+		{I: -1, J: 0},
+		{I: 1, J: 0},
 	}
 
 	north     = Vector2{I: -1, J: 0}
@@ -77,7 +57,7 @@ var (
 )
 
 func (d *Day12) Preprocess(path string) error {
-	lines := utils.ReadFile(path)
+	lines := utils.ReadLines(path)
 	x, y := len(lines), len(lines[0])
 	d.tiles = make([][]byte, x)
 	for i := 0; i < x; i++ {
@@ -98,7 +78,7 @@ func (d *Day12) Solve(path string) {
 	lastLen := 0
 	for i := 0; i < len(d.tiles); i++ {
 		for j := 0; j < len(d.tiles[i]); j++ {
-			_, ok := locallyExplored[Vector2{I: i, J: j}]
+			_, ok := locallyExplored[Vector2{I: float64(i), J: float64(j)}]
 			if ok {
 				continue
 			}
@@ -107,7 +87,7 @@ func (d *Day12) Solve(path string) {
 			area := &area{
 				Byte: d.tiles[i][j],
 			}
-			d.marchArea(i, j, d.tiles[i][j], locallyExplored, area, corners)
+			d.marchArea(float64(i), float64(j), d.tiles[i][j], locallyExplored, area, corners)
 			newLen := len(corners)
 			added := newLen - lastLen
 			lastLen = newLen
@@ -122,7 +102,7 @@ func (d *Day12) Solve(path string) {
 	d.Pt2Sol = discount
 }
 
-func (d *Day12) marchArea(i, j int, b byte, m map[Vector2]byte, area *area, corners map[Corner]struct{}) {
+func (d *Day12) marchArea(i, j float64, b byte, m map[Vector2]byte, area *area, corners map[Corner]struct{}) {
 
 	// initial perimeter is 4
 	perimeter := 4
@@ -148,12 +128,12 @@ func (d *Day12) marchArea(i, j int, b byte, m map[Vector2]byte, area *area, corn
 		}
 
 		// position is out of bounds
-		if !(pos.I >= 0 && pos.I < len(d.tiles) && pos.J >= 0 && pos.J < len(d.tiles[0])) {
+		if !(pos.I >= 0 && pos.I < float64(len(d.tiles)) && pos.J >= 0 && pos.J < float64(len(d.tiles[0]))) {
 			continue
 		}
 
 		// position is inside the area, march and reduce perimeter
-		if d.tiles[pos.I][pos.J] == b {
+		if d.tiles[int(pos.I)][int(pos.J)] == b {
 			perimeter--
 			d.marchArea(pos.I, pos.J, b, m, area, corners)
 		}
@@ -265,5 +245,5 @@ func (d *Day12) insideArea(pos *Vector2, b byte) bool {
 		return false
 	}
 
-	return d.tiles[pos.I][pos.J] == b
+	return d.tiles[int(pos.I)][int(pos.J)] == b
 }

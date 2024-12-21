@@ -1,23 +1,23 @@
 package days
 
 import (
-	"adventofcode/src/geometry"
+	"adventofcode/src/mathematics"
 	"adventofcode/src/utils"
 	"fmt"
 	"slices"
 )
 
-type Vector3 = geometry.Vector3
-type World = geometry.World
-type Transform = geometry.Transform
+type Vector3 = mathematics.Vector3
+type World = mathematics.World
+type Transform = mathematics.Transform
 
 type Day6 struct {
-	utils.DayN
+	DayN
 	world *World
 	agent Transform
 }
 
-var _ utils.Day = (*Day6)(nil)
+var _ Day = (*Day6)(nil)
 
 var forbidden = 0
 var subAgent Transform
@@ -35,8 +35,8 @@ const (
 
 // Create problem associated world
 func (d *Day6) Preprocess(path string) error {
-	lines := utils.ReadFile(path)
-	world, startPos := geometry.WorldFromFile(lines)
+	lines := utils.ReadLines(path)
+	world, startPos := mathematics.WorldFromFile(lines)
 
 	d.world = world
 	d.agent = Transform{
@@ -107,7 +107,7 @@ func march_pt_2(world *World, tr *Transform) bool {
 	}
 
 	if !world.HasBeenVisited(*next) {
-		subAgent = geometry.Transform{
+		subAgent = mathematics.Transform{
 			Position: pos,
 			Rotation: rot,
 		}
@@ -131,7 +131,7 @@ func march_pt_2(world *World, tr *Transform) bool {
 	return true
 }
 
-func checkLoop(obstacles []Vector3, visited map[Vector3][]Vector3, bounds geometry.WorldBounds, tr *Transform) bool {
+func checkLoop(obstacles []Vector3, visited map[Vector3][]Vector3, bounds mathematics.WorldBounds, tr *Transform) bool {
 	for {
 		next := tr.Position.Add(&tr.Rotation)
 		if !bounds.Contains(next) {

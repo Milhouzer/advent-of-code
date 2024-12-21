@@ -10,13 +10,13 @@ import (
 )
 
 type Day1 struct {
-	utils.DayN
+	DayN
 }
 
-var _ utils.Day = (*Day1)(nil)
+var _ Day = (*Day1)(nil)
 
 func (d *Day1) Solve(inputFile string) {
-	lines := utils.ReadFile(inputFile)
+	lines := utils.ReadLines(inputFile)
 
 	// Part 1
 	sum := 0

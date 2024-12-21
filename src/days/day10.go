@@ -1,31 +1,31 @@
 package days
 
 import (
-	"adventofcode/src/geometry"
+	"adventofcode/src/mathematics"
 	"adventofcode/src/utils"
 	"fmt"
 	"strconv"
 )
 
 type Day10 struct {
-	utils.DayN
+	DayN
 	world  [][]int
-	bounds geometry.WorldBounds
+	bounds mathematics.WorldBounds
 }
 
-var _ utils.Day = (*Day10)(nil)
+var _ Day = (*Day10)(nil)
 
 var (
 	hikeDir = []Vector3{
-		geometry.Vector3{X: 1, Y: 0, Z: 0},
-		geometry.Vector3{X: 0, Y: 1, Z: 0},
-		geometry.Vector3{X: -1, Y: 0, Z: 0},
-		geometry.Vector3{X: 0, Y: -1, Z: 0},
+		mathematics.Vector3{X: 1, Y: 0, Z: 0},
+		mathematics.Vector3{X: 0, Y: 1, Z: 0},
+		mathematics.Vector3{X: -1, Y: 0, Z: 0},
+		mathematics.Vector3{X: 0, Y: -1, Z: 0},
 	}
 )
 
 func (d *Day10) Preprocess(path string) error {
-	lines := utils.ReadFile(path)
+	lines := utils.ReadLines(path)
 	numRows := len(lines)
 	numCols := len(lines[0])
 	d.world = make([][]int, numRows)
@@ -36,7 +36,7 @@ func (d *Day10) Preprocess(path string) error {
 		}
 	}
 
-	d.bounds = geometry.WorldBounds{
+	d.bounds = mathematics.WorldBounds{
 		Up:    float64(len(d.world)),
 		Bot:   0,
 		Right: float64(len(d.world[0])),

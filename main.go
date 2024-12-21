@@ -16,7 +16,7 @@ const (
 )
 
 var (
-	daysMap = map[int]utils.Day{
+	daysMap = map[int]days.Day{
 		1:  &days.Day1{},
 		2:  &days.Day2{},
 		3:  &days.Day3{},
@@ -29,6 +29,8 @@ var (
 		10: &days.Day10{},
 		11: &days.Day11{},
 		12: &days.Day12{},
+		13: &days.Day13{},
+		14: &days.Day14{},
 	}
 	LineBreak = "\r\n"
 )
@@ -76,8 +78,11 @@ func main() {
 		fmt.Printf("Skip downloading input file for day %d\n", dayNumber)
 	}
 
-	solver := utils.DaySolver{}
-	solver.Solve(day, filePath)
+	solver := days.DaySolver{}
+	err = solver.Solve(day, filePath)
+	if err != nil {
+		panic(err.Error())
+	}
 }
 
 func initSolver() {

@@ -9,12 +9,12 @@ import (
 )
 
 type Day5 struct {
-	utils.DayN
+	DayN
 	before     map[int][]int
 	startIndex int
 }
 
-var _ utils.Day = (*Day5)(nil)
+var _ Day = (*Day5)(nil)
 
 var (
 	orderingPattern = "%d|%d"
@@ -22,7 +22,7 @@ var (
 
 func (d *Day5) Preprocess(path string) error {
 	d.before = make(map[int][]int)
-	lines := utils.ReadFile(path)
+	lines := utils.ReadLines(path)
 	for i, line := range lines {
 		if line == "" {
 			d.startIndex = i
@@ -38,7 +38,7 @@ func (d *Day5) Preprocess(path string) error {
 }
 
 func (d *Day5) Solve(path string) {
-	lines := utils.ReadFile(path)
+	lines := utils.ReadLines(path)
 
 	// Pt1
 	total := 0

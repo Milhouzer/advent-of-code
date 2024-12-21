@@ -7,10 +7,10 @@ import (
 )
 
 type Day3 struct {
-	utils.DayN
+	DayN
 }
 
-var _ utils.Day = (*Day3)(nil)
+var _ Day = (*Day3)(nil)
 
 var (
 	pattern      = `mul\((\d{1,3}),(\d{1,3})\)|(don\'t\(\))|(do\(\))`
@@ -32,7 +32,7 @@ func (d *Day3) Preprocess(path string) error {
 }
 
 func (d *Day3) Solve(path string) {
-	content := utils.ReadFileContent(path)
+	content := utils.ReadContent(path)
 
 	sum := 0
 	pt2sum := 0

@@ -12,7 +12,7 @@ import (
 )
 
 type Day11 struct {
-	utils.DayN
+	DayN
 	stones []int
 	maxIt  int
 	memory sync.Map
@@ -20,7 +20,7 @@ type Day11 struct {
 	score  *atomic.Int64
 }
 
-var _ utils.Day = (*Day11)(nil)
+var _ Day = (*Day11)(nil)
 
 func (d *Day11) Preprocess(path string) error {
 	d.maxIt = 75 // Increased iterations
@@ -28,7 +28,7 @@ func (d *Day11) Preprocess(path string) error {
 	d.wg = sync.WaitGroup{}
 	d.memory = sync.Map{}
 	d.score.Store(0)
-	line := utils.ReadFileContent(path)
+	line := utils.ReadContent(path)
 	strVals := strings.Split(line, " ")
 	for i := 0; i < len(strVals); i++ {
 		v, _ := strconv.Atoi(strVals[i])

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math"
 	"net/http"
 	"os"
 	"os/exec"
@@ -56,7 +57,7 @@ func DownloadInput(outputPath string, day int) error {
 	return nil
 }
 
-func ReadFile(filename string) []string {
+func ReadLines(filename string) []string {
 	file, err := os.Open(filename)
 	if err != nil {
 		log.Fatal(err)
@@ -77,7 +78,42 @@ func ReadFile(filename string) []string {
 	return lines
 }
 
-func ReadFileContent(filename string) string {
+func ReadLinesInPacks(filename string, packSize int) [][]string {
+	if packSize <= 0 {
+		log.Fatal("Pack size must be greater than 0")
+	}
+
+	file, err := os.Open(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer func(file *os.File) {
+		err = file.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(file)
+
+	var packs [][]string
+	var currentPack []string
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		currentPack = append(currentPack, scanner.Text())
+		if len(currentPack) == packSize {
+			packs = append(packs, currentPack)
+			currentPack = nil // Start a new pack
+		}
+	}
+
+	// Add any remaining lines that don't form a full pack
+	if len(currentPack) > 0 {
+		packs = append(packs, currentPack)
+	}
+
+	return packs
+}
+
+func ReadContent(filename string) string {
 	content, err := os.ReadFile(filename)
 	if err != nil {
 		log.Fatal(err)
@@ -94,4 +130,13 @@ func ClearScreen() {
 	}
 	cmd.Stdout = os.Stdout
 	cmd.Run()
+}
+
+func IsFloatAnInt(f float64) bool {
+	if f == float64(int64(f)) {
+		return true
+	}
+
+	const epsilon = 1e-9 // Tolerance for floating-point comparisons
+	return math.Abs(f-math.Round(f)) < epsilon
 }

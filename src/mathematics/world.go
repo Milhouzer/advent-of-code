@@ -1,4 +1,4 @@
-package geometry
+package mathematics
 
 import (
 	"adventofcode/src/utils"

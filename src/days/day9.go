@@ -8,13 +8,13 @@ import (
 )
 
 type Day9 struct {
-	utils.DayN
+	DayN
 }
 
-var _ utils.Day = (*Day9)(nil)
+var _ Day = (*Day9)(nil)
 
 func (d *Day9) Solve(path string) {
-	line := utils.ReadFileContent(path)
+	line := utils.ReadContent(path)
 	if len(line)%2 == 0 {
 		panic("line length must be odd.")
 	}
