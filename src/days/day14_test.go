@@ -12,21 +12,21 @@ func TestWrap(t *testing.T) {
 
 	// Test cases
 	testCases := []Vector2{
-		{I: 2, J: 4},
-		{I: 4, J: 1},
-		{I: 6, J: -2},
-		{I: 8, J: -5},
-		{I: 10, J: -8},
-		{I: 12, J: -11},
+		{X: 2, Y: 4},
+		{X: 4, Y: 1},
+		{X: 6, Y: -2},
+		{X: 8, Y: -5},
+		{X: 10, Y: -8},
+		{X: 12, Y: -11},
 	}
 	// Expected results
 	expected := []Vector2{
-		{I: 2, J: 4},
-		{I: 4, J: 1},
-		{I: 6, J: 5},
-		{I: 8, J: 2},
-		{I: 10, J: 6},
-		{I: 1, J: 3},
+		{X: 2, Y: 4},
+		{X: 4, Y: 1},
+		{X: 6, Y: 5},
+		{X: 8, Y: 2},
+		{X: 10, Y: 6},
+		{X: 1, Y: 3},
 	}
 
 	// Apply wrapping to each test case

@@ -46,8 +46,8 @@ func (m *Matrix2x2) MulFloat(s float64) Matrix2x2 {
 
 func (m *Matrix2x2) MulVector2(v Vector2) Vector2 {
 	return Vector2{
-		I: m.X1*v.I + m.X2*v.J,
-		J: m.Y1*v.I + m.Y2*v.J,
+		X: m.X1*v.X + m.X2*v.Y,
+		Y: m.Y1*v.X + m.Y2*v.Y,
 	}
 }
 
@@ -109,13 +109,13 @@ func (m *Matrix2x2BigFloat) MulFloat(s *big.Float) Matrix2x2BigFloat {
 // Multiply the matrix by a Vector2.
 func (m *Matrix2x2BigFloat) MulVector2(v Vector2BigFloat) Vector2BigFloat {
 	return Vector2BigFloat{
-		I: new(big.Float).Add(
-			new(big.Float).Mul(m.X1, v.I),
-			new(big.Float).Mul(m.X2, v.J),
+		X: new(big.Float).Add(
+			new(big.Float).Mul(m.X1, v.X),
+			new(big.Float).Mul(m.X2, v.Y),
 		),
-		J: new(big.Float).Add(
-			new(big.Float).Mul(m.Y1, v.I),
-			new(big.Float).Mul(m.Y2, v.J),
+		Y: new(big.Float).Add(
+			new(big.Float).Mul(m.Y1, v.X),
+			new(big.Float).Mul(m.Y2, v.Y),
 		),
 	}
 }

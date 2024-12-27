@@ -6,66 +6,66 @@ import (
 )
 
 type Vector2 struct {
-	I float64
-	J float64
+	X float64
+	Y float64
 }
 
 // Add other to a [Vector2]
 func (v *Vector2) Add(other *Vector2) *Vector2 {
-	return &Vector2{I: v.I + other.I, J: v.J + other.J}
+	return &Vector2{X: v.X + other.X, Y: v.Y + other.Y}
 }
 
 // Remove other to a [Vector2]
 func (v *Vector2) Remove(other *Vector2) *Vector2 {
-	return &Vector2{I: v.I - other.I, J: v.J - other.J}
+	return &Vector2{X: v.X - other.X, Y: v.Y - other.Y}
 }
 
 func (v *Vector2) Manhattan() int {
-	return int(math.Abs(float64(v.I))) + int(math.Abs(float64(v.J)))
+	return int(math.Abs(float64(v.X))) + int(math.Abs(float64(v.Y)))
 }
 
 func (v *Vector2) IsZero() bool {
-	return v.I == 0 && v.J == 0
+	return v.X == 0 && v.Y == 0
 }
 
 func (v *Vector2) InBounds(i, j int) bool {
-	return v.I >= 0 && v.I < float64(i) && v.J >= 0 && v.J < float64(j)
+	return v.X >= 0 && v.X < float64(i) && v.Y >= 0 && v.Y < float64(j)
 }
 
 // Vector2BigFloat uses big.Float for arbitrary precision
 type Vector2BigFloat struct {
-	I *big.Float
-	J *big.Float
+	X *big.Float
+	Y *big.Float
 }
 
 // NewVector2BigFloat creates a new Vector2BigFloat from two float64 values
 func NewVector2BigFloat(i, j float64) *Vector2BigFloat {
 	return &Vector2BigFloat{
-		I: big.NewFloat(i),
-		J: big.NewFloat(j),
+		X: big.NewFloat(i),
+		Y: big.NewFloat(j),
 	}
 }
 
 // Add adds another Vector2BigFloat to the current one
 func (v *Vector2BigFloat) Add(other *Vector2BigFloat) *Vector2BigFloat {
 	return &Vector2BigFloat{
-		I: new(big.Float).Add(v.I, other.I),
-		J: new(big.Float).Add(v.J, other.J),
+		X: new(big.Float).Add(v.X, other.X),
+		Y: new(big.Float).Add(v.Y, other.Y),
 	}
 }
 
 // Remove subtracts another Vector2BigFloat from the current one
 func (v *Vector2BigFloat) Remove(other *Vector2BigFloat) *Vector2BigFloat {
 	return &Vector2BigFloat{
-		I: new(big.Float).Sub(v.I, other.I),
-		J: new(big.Float).Sub(v.J, other.J),
+		X: new(big.Float).Sub(v.X, other.X),
+		Y: new(big.Float).Sub(v.Y, other.Y),
 	}
 }
 
 // Manhattan calculates the Manhattan distance (|I| + |J|) for the vector.
 func (v *Vector2BigFloat) Manhattan() *big.Int {
-	absI := new(big.Float).Abs(v.I)
-	absJ := new(big.Float).Abs(v.J)
+	absI := new(big.Float).Abs(v.X)
+	absJ := new(big.Float).Abs(v.Y)
 
 	sum := new(big.Float).Add(absI, absJ)
 	result, _ := sum.Int(nil)
@@ -74,7 +74,7 @@ func (v *Vector2BigFloat) Manhattan() *big.Int {
 
 // IsZero checks if the vector is the zero vector (both components are zero).
 func (v *Vector2BigFloat) IsZero() bool {
-	return v.I.Cmp(big.NewFloat(0)) == 0 && v.J.Cmp(big.NewFloat(0)) == 0
+	return v.X.Cmp(big.NewFloat(0)) == 0 && v.Y.Cmp(big.NewFloat(0)) == 0
 }
 
 // InBounds checks if the vector is within the bounds of i and j.
@@ -82,6 +82,6 @@ func (v *Vector2BigFloat) InBounds(i, j int) bool {
 	bigI := big.NewFloat(float64(i))
 	bigJ := big.NewFloat(float64(j))
 
-	return v.I.Cmp(big.NewFloat(0)) >= 0 && v.I.Cmp(bigI) < 0 &&
-		v.J.Cmp(big.NewFloat(0)) >= 0 && v.J.Cmp(bigJ) < 0
+	return v.X.Cmp(big.NewFloat(0)) >= 0 && v.X.Cmp(bigI) < 0 &&
+		v.Y.Cmp(big.NewFloat(0)) >= 0 && v.Y.Cmp(bigJ) < 0
 }

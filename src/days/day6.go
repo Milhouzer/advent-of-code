@@ -25,12 +25,7 @@ var subAgent Transform
 var newObstacles = make(map[Vector3]struct{})
 
 const (
-	POUND_SYMBOL        = '#'
-	DOT_SYMBOL          = '.'
-	AGENT_SYMBOL        = '^'
-	TRAIL_SYMBOL        = '+'
-	VIRTUAL_OBSTRUCTION = 'O'
-	MAX_IT              = 150000
+	MAX_IT = 150000
 )
 
 // Create problem associated world

@@ -23,7 +23,7 @@ type bigSystem struct {
 }
 
 func (s *system) String() string {
-	return fmt.Sprintf("%v, [%.0f, %.0f]", s.Buttons, s.Prize, s.Prize.J)
+	return fmt.Sprintf("%v, [%.0f, %.0f]", s.Buttons, s.Prize, s.Prize.Y)
 }
 
 func (s *system) FromString(lines []string) (system, error) {
@@ -53,8 +53,8 @@ func (s *system) FromString(lines []string) (system, error) {
 			Y2: buttonB_Y,
 		},
 		Prize: mathematics.Vector2{
-			I: prize_X,
-			J: prize_Y,
+			X: prize_X,
+			Y: prize_Y,
 		},
 	}, nil
 }
@@ -66,11 +66,11 @@ func (s *system) Solve() (float64, error) {
 	}
 
 	sol := inverted.MulVector2(s.Prize)
-	if !utils.IsFloatAnInt(sol.I) || !utils.IsFloatAnInt(sol.J) {
+	if !utils.IsFloatAnInt(sol.X) || !utils.IsFloatAnInt(sol.Y) {
 		return 0, fmt.Errorf("system has no solution in |N")
 	}
 
-	return sol.I*3 + sol.J, nil
+	return sol.X*3 + sol.Y, nil
 }
 
 func (s *bigSystem) Solve() (*big.Float, error) {
@@ -80,13 +80,13 @@ func (s *bigSystem) Solve() (*big.Float, error) {
 	}
 
 	sol := inverted.MulVector2(s.Prize)
-	a, va := mathematics.ToIntIfNear(sol.I)
-	b, vb := mathematics.ToIntIfNear(sol.J)
+	a, va := mathematics.ToIntIfNear(sol.X)
+	b, vb := mathematics.ToIntIfNear(sol.Y)
 	if !(a && b) {
-		return nil, fmt.Errorf("system has no solution in |N: %f, %f", sol.I, sol.J)
+		return nil, fmt.Errorf("system has no solution in |N: %f, %f", sol.X, sol.Y)
 	}
 
-	fmt.Printf("Viable system: %f, %f", sol.I, sol.J)
+	fmt.Printf("Viable system: %f, %f", sol.X, sol.Y)
 	res := new(big.Float).Mul(va, big.NewFloat(3))
 	res = new(big.Float).Add(res, vb)
 	return res, nil
@@ -125,8 +125,8 @@ func (d *Day13) Solve(path string) {
 		bigsystem := bigSystem{
 			Buttons: mathematics.BigFromMatrix2x2(system.Buttons),
 			Prize: mathematics.Vector2BigFloat{
-				I: new(big.Float).Add(offset, big.NewFloat(system.Prize.I)).SetPrec(128),
-				J: new(big.Float).Add(offset, big.NewFloat(system.Prize.J)).SetPrec(128),
+				X: new(big.Float).Add(offset, big.NewFloat(system.Prize.X)).SetPrec(128),
+				Y: new(big.Float).Add(offset, big.NewFloat(system.Prize.Y)).SetPrec(128),
 			},
 		}
 
@@ -135,7 +135,7 @@ func (d *Day13) Solve(path string) {
 			fmt.Printf("system %v (%v) cannot be solved: %v\r\n", bigsystem, sol, err)
 		} else {
 			tokens2 = new(big.Float).Add(tokens2, sol)
-			fmt.Printf("System %.0f, %.0f solved, added: %.0f, %.0f\r\n", bigsystem.Prize.I, bigsystem.Prize.J, sol, bigsystem.Buttons.X1)
+			fmt.Printf("System %.0f, %.0f solved, added: %.0f, %.0f\r\n", bigsystem.Prize.X, bigsystem.Prize.Y, sol, bigsystem.Buttons.X1)
 		}
 	}
 	// 30626309651571 too low

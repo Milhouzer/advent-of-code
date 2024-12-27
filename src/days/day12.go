@@ -40,20 +40,20 @@ type Corner struct {
 
 var (
 	gridDirs = []Vector2{
-		{I: 0, J: 1},
-		{I: 0, J: -1},
-		{I: -1, J: 0},
-		{I: 1, J: 0},
+		{X: 0, Y: 1},
+		{X: 0, Y: -1},
+		{X: -1, Y: 0},
+		{X: 1, Y: 0},
 	}
 
-	north     = Vector2{I: -1, J: 0}
-	south     = Vector2{I: 1, J: 0}
-	east      = Vector2{I: 0, J: 1}
-	west      = Vector2{I: 0, J: -1}
-	northEast = Vector2{I: -1, J: 1}
-	northWest = Vector2{I: -1, J: -1}
-	southEast = Vector2{I: 1, J: 1}
-	southWest = Vector2{I: 1, J: -1}
+	north     = Vector2{X: -1, Y: 0}
+	south     = Vector2{X: 1, Y: 0}
+	east      = Vector2{X: 0, Y: 1}
+	west      = Vector2{X: 0, Y: -1}
+	northEast = Vector2{X: -1, Y: 1}
+	northWest = Vector2{X: -1, Y: -1}
+	southEast = Vector2{X: 1, Y: 1}
+	southWest = Vector2{X: 1, Y: -1}
 )
 
 func (d *Day12) Preprocess(path string) error {
@@ -78,7 +78,7 @@ func (d *Day12) Solve(path string) {
 	lastLen := 0
 	for i := 0; i < len(d.tiles); i++ {
 		for j := 0; j < len(d.tiles[i]); j++ {
-			_, ok := locallyExplored[Vector2{I: float64(i), J: float64(j)}]
+			_, ok := locallyExplored[Vector2{X: float64(i), Y: float64(j)}]
 			if ok {
 				continue
 			}
@@ -111,7 +111,7 @@ func (d *Day12) marchArea(i, j float64, b byte, m map[Vector2]byte, area *area, 
 	area.Surface++
 
 	// mark init pos as visited
-	pos := Vector2{I: i, J: j}
+	pos := Vector2{X: i, Y: j}
 	angles := d.angles(&pos, b)
 	for _, corner := range angles {
 		corners[corner] = struct{}{}
@@ -119,7 +119,7 @@ func (d *Day12) marchArea(i, j float64, b byte, m map[Vector2]byte, area *area, 
 	m[pos] = b
 
 	for _, dir := range gridDirs {
-		pos := Vector2{I: i + dir.I, J: j + dir.J}
+		pos := Vector2{X: i + dir.X, Y: j + dir.Y}
 		_, ok := m[pos]
 		// position has already been visited and is inside the area
 		if ok && m[pos] == b {
@@ -128,14 +128,14 @@ func (d *Day12) marchArea(i, j float64, b byte, m map[Vector2]byte, area *area, 
 		}
 
 		// position is out of bounds
-		if !(pos.I >= 0 && pos.I < float64(len(d.tiles)) && pos.J >= 0 && pos.J < float64(len(d.tiles[0]))) {
+		if !(pos.X >= 0 && pos.X < float64(len(d.tiles)) && pos.Y >= 0 && pos.Y < float64(len(d.tiles[0]))) {
 			continue
 		}
 
 		// position is inside the area, march and reduce perimeter
-		if d.tiles[int(pos.I)][int(pos.J)] == b {
+		if d.tiles[int(pos.X)][int(pos.Y)] == b {
 			perimeter--
-			d.marchArea(pos.I, pos.J, b, m, area, corners)
+			d.marchArea(pos.X, pos.Y, b, m, area, corners)
 		}
 	}
 
@@ -245,5 +245,5 @@ func (d *Day12) insideArea(pos *Vector2, b byte) bool {
 		return false
 	}
 
-	return d.tiles[int(pos.I)][int(pos.J)] == b
+	return d.tiles[int(pos.X)][int(pos.Y)] == b
 }

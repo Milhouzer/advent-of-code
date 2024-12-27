@@ -31,6 +31,8 @@ var (
 		12: &days.Day12{},
 		13: &days.Day13{},
 		14: &days.Day14{},
+		15: &days.Day15{},
+		16: &days.Day16{},
 	}
 	LineBreak = "\r\n"
 )
